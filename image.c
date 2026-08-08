@@ -84,6 +84,13 @@ image_fallback(char **ret, u_int sx, u_int sy)
 	char	*buf, *label;
 	u_int	 py, size, lsize;
 
+	/*
+	 * A zero-height image would make the (sy - 1) terms below underflow,
+	 * producing a far too small allocation; render at least one line.
+	 */
+	if (sy == 0)
+		sy = 1;
+
 	/* Allocate first line. */
 	lsize = xasprintf(&label, "SIXEL IMAGE (%ux%u)\r\n", sx, sy) + 1;
 	if (sx < lsize - 3)
